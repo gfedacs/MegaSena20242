@@ -60,6 +60,10 @@ fun NumerosSena(megaSena: MegaSena, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+        Text(
+            text = "Números da Mega Sena",
+        )
         TextField(
             value = serieApostada,
             onValueChange = { serieApostada = it },
@@ -68,18 +72,37 @@ fun NumerosSena(megaSena: MegaSena, modifier: Modifier = Modifier) {
         )
         Button(
             onClick = {
-                mostrarNumeros = true
+                // Verifica se a entrada é válida
+                if (serieApostada.isNotEmpty() && serieApostada.split(",").all { it.trim().toIntOrNull() != null }) {
+                    mostrarNumeros = true
+                } else {
+                    // Limpa o campo de texto e exibe uma mensagem de erro
+                    serieApostada = ""
+                    mostrarNumeros = false
+                    Log.d("NumerosSena", "Campo vazio.")
+                }
             }
         ) {
             Text("Verificar números")
         }
+
+        Button(
+            onClick = {
+                mostrarNumeros = false
+                serieApostada = ""
+                Log.d("NumerosSena", "valores redefinidos")
+            }
+        ) {
+            Text("redefinir Valores")
+        }
+
         if (mostrarNumeros) {
             var corAtual = Color.Red
             Row {
-                val numerosApostados = serieApostada.split(",").map { it.toInt() }
+                val numerosApostados = serieApostada.split(",").mapNotNull { it.trim().toIntOrNull() }
                 for (numero in megaSena.numeros) {
                     if (numerosApostados.contains(numero)) {
-                        corAtual = Color.Blue
+                        corAtual = Color.Green
                     }
                     Text(
                         text = "$numero,",
@@ -92,6 +115,9 @@ fun NumerosSena(megaSena: MegaSena, modifier: Modifier = Modifier) {
         }
     }
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable
